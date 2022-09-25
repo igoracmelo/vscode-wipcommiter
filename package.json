@@ -1,0 +1,61 @@
+{
+  "name": "wipcommiter",
+  "displayName": "WIP Commiter",
+  "description": "Easily make and revert WIP commits",
+  "publisher": "IgorMelo",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.69.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:wipcommiter.saveStageAndCommit",
+    "onCommand:wipcommiter.saveAndStage",
+    "onCommand:wipcommiter.commitStaged",
+    "onCommand:wipcommiter.resetWipsSoft"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "wipcommiter.saveStageAndCommit",
+        "title": "WIP Committer: Save, stage and commit file"
+      },
+      {
+        "command": "wipcommiter.commitStaged",
+        "title": "WIP Committer: Commit staged changes"
+      },
+      {
+        "command": "wipcommiter.saveAndStage",
+        "title": "WIP Committer: Save and stage file"
+      },
+      {
+        "command": "wipcommiter.resetWipsSoft",
+        "title": "WIP Committer: Reset WIPs (soft)"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.69.0",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "@typescript-eslint/parser": "^5.31.0",
+    "@vscode/test-electron": "^2.1.5",
+    "eslint": "^8.20.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "typescript": "^4.7.4"
+  }
+}
