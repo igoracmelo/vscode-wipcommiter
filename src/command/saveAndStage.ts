@@ -1,24 +1,27 @@
-import * as vscode from 'vscode';
-import { execAsync } from "../util/childProcess";
+import { GitWrapper } from '../gitWrapper';
 import { findGitRepositoryByFilePath } from '../util/git';
+import { IDEActions, VscodeActions } from '../util/ideActions';
 
-export async function saveAndStage() {
-  const filePath = vscode.window.activeTextEditor?.document.fileName;
+export async function saveAndStage(actions?: IDEActions) {
+  if (!actions) {
+		actions = new VscodeActions();
+	}
+
+  const filePath = await actions.getActiveFilePath();
 	if (!filePath) {
 		return false;
 	}
 
 	const folderPath = await findGitRepositoryByFilePath(filePath);
+	const git = new GitWrapper(folderPath);
 
-  await vscode.commands.executeCommand('workbench.action.files.save');
-	const { stdout } = await execAsync(`git status -s`, { cwd: folderPath });
+  await actions.saveActiveFile();
+	const status = await git.status(filePath);
 
-	if (!stdout.trim()) {
+	if (!status.untracked.length && !status.unstaged.length) {
+		actions.showInfo('This file has no changes to be staged');
 		return false;
 	}
 
-	const { stderr } = await execAsync(`git add "${filePath}"`, { cwd: folderPath });
-	if (stderr.trim()) {
-		return false;
-	}
+	await git.add(filePath);
 }

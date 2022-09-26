@@ -1,17 +1,20 @@
-import * as vscode from 'vscode';
-import { execAsync } from "../util/childProcess";
+import { GitWrapper } from '../gitWrapper';
 import { findGitRepositoryByFilePath } from "../util/git";
+import config from '../config';
+import { IDEActions, VscodeActions } from '../util/ideActions';
 
-export async function commitStaged() {
-	const filePath = vscode.window.activeTextEditor?.document.fileName;
+export async function commitStaged(actions?: IDEActions) {
+	if (!actions) {
+		actions = new VscodeActions();
+	}
+
+	const filePath = await actions.getActiveFilePath();
 	if (!filePath) {
 		return;
 	}
 
 	const folderPath = await findGitRepositoryByFilePath(filePath);
+	const git = new GitWrapper(folderPath);
 
-  const wipMessage = '[WIP-COMMITER]';
-
-	// await vscode.commands.executeCommand('workbench.action.files.save');
-	await execAsync(`git commit -m "${wipMessage}" --no-verify`, { cwd: folderPath });
+	await git.commit(config.wipMessage, { noVerify: true });
 }
